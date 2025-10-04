@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://n7tm0m4gb115"]
+
+[ext_resource type="Script" uid="uid://ctcq1jbbc0plc" path="res://landscape_generator.gd" id="1_ig7tw"]
+
+[node name="LanscapeGenerator" type="Node3D"]
+script = ExtResource("1_ig7tw")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
