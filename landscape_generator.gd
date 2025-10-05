@@ -2,8 +2,8 @@ extends Node3D
 
 # --- Export Variables ---
 @export var image_size: int = 128
-@export var noise_frequency: float = 0.015
-@export var mesh_height_scale: float = 10.0 
+@export var noise_frequency: float = 0.03 # Increased detail
+@export var mesh_height_scale: float = 25.0 # Increased height 
 @export var mesh_xz_scale: float = 0.5    
 
 # --- Internal Variables ---
@@ -16,21 +16,18 @@ func _ready():
 	var generated_image: Image = generate_noise_image()
 	
 	if generated_image != null:
-		# 1. Use the directly generated image for the rest of the process
 		heightmap_image = generated_image
 		grid_size = heightmap_image.get_width() + 1
 		print("Heightmap loaded. Grid size will be %dx%d vertices." % [grid_size, grid_size])
 		
-		# 2. Save the image to meet the assignment's requirement (optional for execution, mandatory for submission)
 		save_image_to_disk(heightmap_image)
 		
-		# 3. Create the 3D geometry
 		create_landscape_mesh()
 	else:
 		push_error("Failed to generate heightmap image. Cannot create landscape.")
 
 
-# --- Noise Generation Function (Step 1 - Now returns the Image) ---
+# --- Noise Generation Function (Step 1) ---
 func generate_noise_image() -> Image:
 	print("Generating FastNoiseLite image...")
 
@@ -49,7 +46,7 @@ func generate_noise_image() -> Image:
 			
 	return image
 	
-# --- New Helper Function to save the generated image
+# --- Helper Function to save the generated image
 func save_image_to_disk(image: Image):
 	var error = image.save_png("res://heightmap.png")
 	if error != OK:
@@ -58,7 +55,7 @@ func save_image_to_disk(image: Image):
 		print("Successfully saved heightmap.png with size %dx%d" % [image_size, image_size])
 
 
-# --- Mesh Generation Function (Step 2C - Remains the same logic) ---
+# --- Mesh Generation Function (Step 2C - Now adds Vertex Color) ---
 func create_landscape_mesh():
 	# 1. Create a container for the mesh
 	var mesh_instance = MeshInstance3D.new()
@@ -69,7 +66,12 @@ func create_landscape_mesh():
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	# 3. Generate Vertices and UVs
+	# Define color stops for the gradient (from low height to high height)
+	var color_grass = Color("#4a6a3b") # Green/earth color for low areas
+	var color_rock = Color("#808080")  # Grey color for mid-height
+	var color_snow = Color("#ffffff")  # White color for peaks
+	
+	# 3. Generate Vertices, UVs, and COLORS
 	for z in range(grid_size):
 		for x in range(grid_size):
 			
@@ -78,29 +80,40 @@ func create_landscape_mesh():
 			var z_pos = float(z) * mesh_xz_scale
 			
 			# B. Get Height from Image
-			var y_height = 0.0
-			
 			var image_x = clamp(x, 0, image_size - 1)
 			var image_y = clamp(z, 0, image_size - 1)
+			var color_pixel = heightmap_image.get_pixel(image_x, image_y)
+			var pixel_value = color_pixel.r # This value is from 0.0 (valley) to 1.0 (peak)
 			
-			# Get the color of the pixel
-			var color = heightmap_image.get_pixel(image_x, image_y)
-
-			# Use the red channel (r) to control the height
-			var pixel_value = color.r
-			y_height = pixel_value * mesh_height_scale
+			var y_height = pixel_value * mesh_height_scale
 			
-			# C. Set Vertex Data
+			# C. Calculate Vertex Color based on Normalized Height (0.0 to 1.0)
+			var vertex_color: Color
+			
+			# TIER ADJUSTMENT: Lowering the thresholds to see more green/rock.
+			if pixel_value < 0.2:
+				# Bottom 20%: Mostly grass/earth
+				vertex_color = color_grass.lerp(color_rock, pixel_value / 0.2)
+			elif pixel_value < 0.5:
+				# Mid section (20% to 50%): Mostly rock/mid-grey
+				vertex_color = color_rock.lerp(color_snow, (pixel_value - 0.2) / 0.3)
+			else:
+				# Top 50%: Snow/Peak
+				# We can also add a slight darker color for the highest peaks for contrast
+				vertex_color = color_snow.lerp(color_rock, (pixel_value - 0.5) * 2.0)
+				
+			st.set_color(vertex_color) # <-- SET THE COLOR
+			
+			# D. Set Vertex Data
 			var vertex_position = Vector3(x_pos, y_height, z_pos)
 			
-			# D. Set UV coordinates (for texture mapping)
+			# E. Set UV coordinates (for texture mapping)
 			var u = float(x) / (grid_size - 1.0)
 			var v = float(z) / (grid_size - 1.0)
-			
 			st.set_uv(Vector2(u, v))
 			st.add_vertex(vertex_position)
 
-	# 4. Generate Triangles (Indices)
+	# 4. Generate Triangles (Indices - unchanged)
 	for z in range(image_size):
 		for x in range(image_size):
 			var v0 = z * grid_size + x
@@ -135,15 +148,21 @@ func create_landscape_mesh():
 	
 	print("3D Landscape Mesh created successfully!")
 
-# --- Texture Function (Step 3) ---
+# --- Texture Function (Step 3 - Finalized: Now uses Vertex Color) ---
 func add_texture_and_material(mesh_instance: MeshInstance3D):
-	# Load the heightmap image to use as the Albedo texture
-	var texture = ImageTexture.create_from_image(heightmap_image)
+	# We no longer apply the heightmap as a texture, but we enable vertex colors
 	
 	var material = StandardMaterial3D.new()
 	
-	# Display FastNoiseLite image as texture on landscape
-	material.albedo_texture = texture
+	# Crucial step: Tell the material to use the colors we set on the vertices (grass/rock/snow)
+	material.vertex_color_use_as_albedo = true 
+	
+	# Improve the look with PBR properties
+	material.roughness = 0.8  # Make it less shiny (more like rough snow/rock)
+	material.metallic = 0.1   # Keep it non-metallic
+	
+	# Optional: Enable texture for shadows/details if needed, but not necessary for color
+	# material.albedo_texture = ImageTexture.create_from_image(heightmap_image) 
 	
 	mesh_instance.material_override = material
-	print("Texture applied to the landscape.")
+	print("Material finalized with height-based coloring.")

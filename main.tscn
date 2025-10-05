@@ -4,6 +4,10 @@
 
 [node name="LanscapeGenerator" type="Node3D"]
 script = ExtResource("1_ig7tw")
+image_size = null
+noise_frequency = null
+mesh_height_scale = 12.0
+mesh_xz_scale = null
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 15, 0)
