@@ -11,11 +11,11 @@ This section details the primary technical responsibilities handled by the two a
 | Core Task Area | Specific Contribution | Contributor |
 | :--- | :--- | :--- |
 | **I. Noise Generation & Image Data** | Implemented the `generate_noise_image()` function, FastNoiseLite setup (Simplex/Octaves), and `heightmap.png` file handling. | Mihir |
-| **II. 3D Mesh Geometry (Vertices)** | Wrote the core `create_landscape_mesh` function, including the logic for calculating vertex positions and mapping the height from the image's red channel (`color.r`). | [Your Name] |
+| **II. 3D Mesh Geometry (Vertices)** | Wrote the core `create_landscape_mesh` function, including the logic for calculating vertex positions and mapping the height from the image's red channel (`color.r`). | Faneesh |
 | **III. Mesh Indexing & UV Mapping** | Developed the `SurfaceTool` indexing logic to create the grid of triangles (quads) and calculated the necessary UV coordinates for texturing. | Mihir |
-| **IV. Final Material & Aesthetics** | Handled final debugging, implemented the `add_texture_and_material` logic, and ensured the material uses the calculated vertex colors and the FastNoiseLite image as a texture (as required). | [Your Name] |
-| **V. Project & Logging Management** | Initial Godot project setup, scene configuration (Camera3D, Light3D), and managing the Git repository and submission logs (`git log`, `kanban_log.md`). | [Your Name] |
-| **VI. Final Submission Prep** | Final compilation of documentation and preparation of the short debugging/testing video. | Mihir |
+| **IV. Final Material & Aesthetics** | Handled final debugging, implemented the `add_texture_and_material` logic, and ensured the material uses the calculated vertex colors and the FastNoiseLite image as a texture (as required). | Faneesh |
+| **V. Project & Logging Management** | Initial Godot project setup, scene configuration (Camera3D, Light3D), and managing the Git repository and submission logs (`git log`, `kanban_log.md`). | Faneesh |
+| **VI. Final Submission Prep** | Final compilation of documentation and preparation of the short debugging/testing video. | Satveer |
 
 ---
 ## Project Technical Summary
