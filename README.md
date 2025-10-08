@@ -25,3 +25,18 @@ The final integrated solution adheres to all assignment specifications:
 * Creates a grid of 3D quads where the number of vertices is correctly set to **one more row/column** than the pixel dimensions.
 * Uses the **red channel** of the noise image to control vertex height.
 * Successfully displays the FastNoiseLite image as a texture over the generated geometry.
+
+* ## Different Outputs for Individual Trials
+
+<img width="1914" height="1034" alt="image" src="https://github.com/user-attachments/assets/d8d199fd-e010-454d-b96d-ceed92e6f6a4" />
+
+<img width="1610" height="979" alt="image" src="https://github.com/user-attachments/assets/3dc2336b-c2bc-43fd-b4d0-d66ce2ea1462" />
+
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/bfbfc9bd-f602-4615-91f5-9295149129a1" />
+
+
+
+
+
+
+
