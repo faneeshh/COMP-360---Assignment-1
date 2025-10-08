@@ -1,23 +1,27 @@
-# COMP 360 AB1: 3D Prototype Landscape Assignment
+# COMP 360 AB1: 3D Procedural Landscape Generator
 
-This repository contains the solution for Assignment 1: 3D Prototype Landscape generation using Godot 4.5 and GDScript.
+This project was completed using an iterative, experimental approach where the group first developed multiple independent solutions for the core components (Noise, Geometry, Material) before integrating the most successful versions into the final submission.
 
-The project successfully generates a dynamic 3D mesh based on a FastNoiseLite heightmap, meeting all technical requirements for geometry construction and texturing.
+The final system uses dynamic mesh generation in Godot 4.5 based on a FastNoiseLite heightmap.
 
-## Individual Contribution Breakdown
+## Individual Contribution Breakdown (6 Members)
 
-This section details the primary technical responsibilities handled by the two active group members over the two-week period.
+This table outlines the primary area of specialization and the specific component each team member was responsible for mastering, testing, and ultimately contributing to the final integrated solution.
 
-| Core Task Area | Specific Contribution | Contributor |
+| Core Component | Specialization & Key Contribution | Contributor |
 | :--- | :--- | :--- |
-| **I. Noise Generation & Image Data** | Implemented the `generate_noise_image()` function, FastNoiseLite setup (Simplex/Octaves), and `heightmap.png` file handling. | Mihir |
-| **II. 3D Mesh Geometry (Vertices)** | Wrote the core `create_landscape_mesh` function, including the logic for calculating vertex positions and mapping the height from the image's red channel (`color.r`). | Faneesh |
-| **III. Mesh Indexing & UV Mapping** | Developed the `SurfaceTool` indexing logic to create the grid of triangles (quads) and calculated the necessary UV coordinates for texturing. | Mihir |
-| **IV. Final Material & Aesthetics** | Handled final debugging, implemented the `add_texture_and_material` logic, and ensured the material uses the calculated vertex colors and the FastNoiseLite image as a texture (as required). | Faneesh |
-| **V. Project & Logging Management** | Initial Godot project setup, scene configuration (Camera3D, Light3D), and managing the Git repository and submission logs (`git log`, `kanban_log.md`). | Faneesh |
-| **VI. Final Submission Prep** | Final compilation of documentation and preparation of the short debugging/testing video. | Satveer |
+| **I. Noise Function Mastery** | Led the exploration and implementation of different FastNoiseLite settings (Simplex vs. Cellular) and optimized the `fractal_octaves` and `frequency` for the best "natural-looking" data source. | **Mihir** |
+| **II. Core Heightmap Data Pipeline** | Implemented the final `generate_noise_image` function, including normalization (mapping $[-1, 1]$ to $[0, 1]$) and managing the image resource creation and disk saving. | **Rahool** |
+| **III. Vertex Position Mapping** | Developed the initial geometry construction and specialized in translating the 2D heightmap data to 3D vertex Y-positions via the `color.r` channel. | **Faneesh** |
+| **IV. Mesh Indexing & Quads** | Mastered the crucial `SurfaceTool` logic for connecting vertices with triangle indices (quad formation) and ensuring no gaps or seams appeared in the final mesh. | **Hayden** |
+| **V. Material & Aesthetic Grading** | Developed the final look by implementing the height-based vertex color gradient system and ensuring the final material blended this color with the required FastNoiseLite image texture. | **Satveer** |
+| **VI. UV Coordination & Project Logging** | Focused on calculating the accurate UV coordinates for texture wrapping and managed the **Git repository**, `README.md`, and **Kanban logging** of project progress. | **Rohit** |
 
 ---
-## Project Technical Summary
+## Technical Summary
 
-The code adheres to the 'one more vertex row/column than pixels' rule by setting `grid_size = image_size + 1` and uses GDScript's `SurfaceTool` for efficient mesh construction. All geometry parameters are exposed as `@export` variables for testing and tuning.
+The final integrated solution adheres to all assignment specifications:
+* Generates a 2D image using FastNoiseLite and multiple octaves.
+* Creates a grid of 3D quads where the number of vertices is correctly set to **one more row/column** than the pixel dimensions.
+* Uses the **red channel** of the noise image to control vertex height.
+* Successfully displays the FastNoiseLite image as a texture over the generated geometry.
